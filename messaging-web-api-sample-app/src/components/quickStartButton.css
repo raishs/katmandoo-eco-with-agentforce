@@ -1,0 +1,74 @@
+.quickStartButton {
+    width: 20rem;
+    background-color: #FF8C42; /* Katmandoo orange */
+    color: white;
+    padding: 20px 40px;
+    border-radius: 25px;
+    outline: 0;
+    border: 0; 
+    margin: 30px auto;
+    cursor: pointer;
+    box-shadow: 0px 4px 15px rgba(255, 140, 66, 0.3);
+    transition: all 0.3s ease;
+    font-weight: bold;
+    font-size: 1.2rem;
+    display: block;
+    position: relative;
+}
+
+.quickStartButton:hover:not(:disabled) {
+    background-color: #E67E3B; /* Darker orange */
+    transform: translateY(-2px);
+    box-shadow: 0px 6px 20px rgba(255, 140, 66, 0.4);
+}
+
+.quickStartButton:disabled {
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+/* Reuse the existing loading animation styles */
+.quickStartButton .messagingButtonLoadingUI {
+    --color: white;
+    --size-mid: 4vmin;
+    --size-dot: 1.5vmin;
+    --size-bar: 0.4vmin;
+    --size-square: 3vmin;
+    position: absolute;
+    width: 50%;
+    display: block;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: -25px;
+}
+
+.quickStartButton .messagingButtonLoadingUI::before,
+.quickStartButton .messagingButtonLoadingUI::after {
+    content: '';
+    box-sizing: border-box;
+    position: absolute;
+}
+
+.quickStartButton .messagingButtonLoadingUI.loadingBalls::before {
+    width: var(--size-mid);
+    height: var(--size-mid);
+    border: 4px solid white;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: loadingAnimation 1s linear infinite;
+}
+
+.quickStartButton .messagingButtonLoadingUI.loadingBalls::after {
+    width: calc(var(--size-mid) - 2px);
+    height: calc(var(--size-mid) - 2px);
+    border: 2px solid transparent;
+    border-top-color: white;
+    border-radius: 50%;
+    animation: loadingAnimation 0.6s linear reverse infinite;
+}
+
+@keyframes loadingAnimation {
+    100% {
+        transform: rotate(1turn);
+    }
+} 
