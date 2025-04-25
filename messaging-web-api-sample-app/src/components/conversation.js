@@ -86,8 +86,14 @@ export default function Conversation(props) {
                         return;
                     }
                     console.log("Pre-Chat is not enabled. Continuing to create a new conversation.");
+                    console.log("Username received in props:", props.username);
+                    
+                    if (!props.username) {
+                        console.warn("No username provided to Conversation component");
+                    }
+                    
                     const routingAttributes = {
-                        userName: props.username || 'Guest'
+                        userName: props.username
                     };
                     console.log('Creating conversation with routing attributes:', routingAttributes);
                     return handleCreateNewConversation(routingAttributes)

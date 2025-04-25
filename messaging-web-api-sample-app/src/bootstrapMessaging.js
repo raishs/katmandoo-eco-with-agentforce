@@ -52,9 +52,7 @@ const BootstrapMessaging = ({ username }) => {
                 "label": "Username",
                 "name": "userName",
                 "value": username,
-                "displayToAgent": false,
-                "required": false,
-                "type": "hidden",
+                "displayToAgent": true,
                 "transcriptFields": ["userName__c"]
             }];
 
@@ -438,8 +436,8 @@ const BootstrapMessaging = ({ username }) => {
                     <MessagingWindow
                         isExistingConversation={isExistingConversation}
                         showMessagingWindow={showMessagingWindow}
-                            deactivateMessagingButton={appUiReady} 
-                        />
+                        deactivateMessagingButton={appUiReady}
+                        username={username} />
                     </div>
                 </Draggable>
             )}
