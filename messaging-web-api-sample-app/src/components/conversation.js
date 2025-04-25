@@ -6,7 +6,7 @@ import MessagingHeader from "./messagingHeader";
 import MessagingBody from "./messagingBody";
 import MessagingInputFooter from "./messagingInputFooter";
 
-import { setJwt, setLastEventId, storeConversationId, getConversationId, getJwt, clearInMemoryData, setDeploymentConfiguration } from "../services/dataProvider";
+import { setJwt, setLastEventId, storeConversationId, getConversationId, getJwt, clearInMemoryData, setDeploymentConfiguration, getDeploymentConfiguration } from "../services/dataProvider";
 import { subscribeToEventSource, closeEventSource } from '../services/eventSourceService';
 import { sendTypingIndicator, sendTextMessage, getContinuityJwt, listConversations, listConversationEntries, closeConversation, getUnauthenticatedAccessToken, createConversation } from "../services/messagingService";
 import * as ConversationEntryUtil from "../helpers/conversationEntryUtil";
@@ -74,13 +74,23 @@ export default function Conversation(props) {
     function handleNewConversation() {
         return handleGetUnauthenticatedJwt()
                 .then(() => {
+                    console.log('Checking pre-chat configuration:', {
+                        shouldDisplay: prechatUtil.shouldDisplayPrechatForm(),
+                        isEnabled: prechatUtil.isPrechatEnabled(),
+                        configuration: getDeploymentConfiguration()
+                    });
+                    
                     if (prechatUtil.shouldDisplayPrechatForm()) {
                         console.log("Pre-Chat is enabled. Continuing to render a Pre-Chat form.");
                         setShowPrechatForm(true);
                         return;
                     }
                     console.log("Pre-Chat is not enabled. Continuing to create a new conversation.");
-                    return handleCreateNewConversation()
+                    const routingAttributes = {
+                        userName: props.username || 'Guest'
+                    };
+                    console.log('Creating conversation with routing attributes:', routingAttributes);
+                    return handleCreateNewConversation(routingAttributes)
                             .then(() => {
                                 console.log(`Completed initializing a new conversation with conversationId: ${getConversationId()}`);
                             })
@@ -117,9 +127,7 @@ export default function Conversation(props) {
                                 console.error(`${err}`);
                             });
                 })
-                .catch(err => {
-                    console.error(`${err}`);
-                });
+                .catch(() => Promise.reject());
     }
 
     /**
@@ -134,7 +142,7 @@ export default function Conversation(props) {
     function handleGetUnauthenticatedJwt() {
         if (getJwt()) {
             console.warn("Messaging access token (JWT) already exists in the web storage. Discontinuing to create a new Unauthenticated access token.");
-            return handleExistingConversation().then(Promise.reject());
+            return handleExistingConversation().then(() => Promise.reject());
         }
 
         return getUnauthenticatedAccessToken()

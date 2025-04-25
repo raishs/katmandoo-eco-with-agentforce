@@ -8,7 +8,12 @@ export const prechatUtil = {
      */
     isPrechatEnabled() {
         const configuration = getDeploymentConfiguration();
-        return configuration && configuration.forms && configuration.forms.length;
+        console.log('Checking pre-chat configuration:', {
+            configuration: configuration,
+            forms: configuration?.forms,
+            hasForms: configuration?.forms?.length > 0
+        });
+        return configuration && configuration.forms && configuration.forms.length > 0;
     },
 
     /**
@@ -70,11 +75,17 @@ export const prechatUtil = {
      * @returns {boolean} - TRUE if Pre-Chat is enabled and at least one visible form field is configured, FALSE otherwise.
      */
     shouldDisplayPrechatForm() {
+        if (!this.isPrechatEnabled()) {
+            return false;
+        }
         const prechatFormFields = this.getPrechatFormFields();
-        const visiblePrechatFormFields = prechatFormFields && prechatFormFields.filter(field => {
+        if (!prechatFormFields || prechatFormFields.length === 0) {
+            return false;
+        }
+        const visiblePrechatFormFields = prechatFormFields.filter(field => {
             return field.isHidden === false;
         });
-        return visiblePrechatFormFields && visiblePrechatFormFields.length > 0;
+        return visiblePrechatFormFields.length > 0;
     },
 
     /**

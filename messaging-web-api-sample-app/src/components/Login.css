@@ -1,0 +1,104 @@
+.loginContainer {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--light-green) 0%, var(--cream) 100%);
+    padding: calc(var(--spacing-unit) * 4);
+}
+
+.loginCard {
+    background: white;
+    padding: calc(var(--spacing-unit) * 8);
+    border-radius: 16px;
+    box-shadow: var(--card-shadow);
+    width: 100%;
+    max-width: 420px;
+    text-align: center;
+}
+
+.loginTitle {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.25rem;
+    font-weight: 700;
+    color: var(--dark-text);
+    margin-bottom: calc(var(--spacing-unit) * 2);
+    letter-spacing: -0.02em;
+}
+
+.loginSubtitle {
+    font-family: 'Inter', sans-serif;
+    font-size: 1rem;
+    color: var(--body-text);
+    margin-bottom: calc(var(--spacing-unit) * 4);
+}
+
+.loginForm {
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--spacing-unit) * 3);
+}
+
+.formGroup {
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--spacing-unit) * 1.5);
+    text-align: left;
+}
+
+.formGroup label {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--dark-text);
+}
+
+.formGroup input {
+    padding: calc(var(--spacing-unit) * 2.5);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    font-family: 'Inter', sans-serif;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+}
+
+.formGroup input:focus {
+    outline: none;
+    border-color: var(--sf-blue);
+    box-shadow: 0 0 0 2px rgba(1, 118, 211, 0.1);
+}
+
+.loginButton {
+    background: var(--sf-blue);
+    color: white;
+    padding: calc(var(--spacing-unit) * 2.5);
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-top: calc(var(--spacing-unit) * 2);
+}
+
+.loginButton:hover {
+    background: #005FB2;
+    transform: translateY(-1px);
+}
+
+.errorMessage {
+    color: #dc2626;
+    font-size: 0.875rem;
+    margin-top: calc(var(--spacing-unit) * 2);
+    font-family: 'Inter', sans-serif;
+}
+
+@media (max-width: 480px) {
+    .loginCard {
+        padding: calc(var(--spacing-unit) * 6);
+    }
+
+    .loginTitle {
+        font-size: 2rem;
+    }
+} 

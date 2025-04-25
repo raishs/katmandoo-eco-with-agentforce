@@ -334,3 +334,194 @@ body {
         display: none;
     }
 }
+
+.headerContent {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 calc(var(--spacing-unit) * 6);
+}
+
+.logoContainer {
+    display: flex;
+    align-items: center;
+}
+
+.templeLogo {
+    width: 80px;
+    height: auto;
+}
+
+.userWelcome {
+    font-family: 'Inter', sans-serif;
+    font-size: 1rem;
+    color: var(--dark-text);
+    font-weight: 500;
+}
+
+/* Tab Navigation */
+.tab-navigation {
+    display: flex;
+    gap: 1rem;
+    padding: 1rem 2rem;
+    background: var(--background-light, #f8f9fa);
+    border-bottom: 2px solid var(--border-color, #e9ecef);
+    margin-top: 2rem;
+}
+
+.tab-button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--text-secondary, #6c757d);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: var(--font-family);
+    font-size: 1rem;
+}
+
+.tab-button:hover {
+    background: var(--background-hover, #e9ecef);
+}
+
+.tab-button.active {
+    background: var(--primary-color, #2E6930);
+    color: white;
+}
+
+.tab-icon {
+    font-size: 1.25rem;
+}
+
+.tab-content {
+    padding: 2rem;
+    background: white;
+    min-height: 400px;
+}
+
+/* Plants and Challenges Grids */
+.plants-grid,
+.challenges-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+    padding: 1rem;
+}
+
+.plant-card,
+.challenge-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease;
+    border: 1px solid var(--border-color, #e9ecef);
+}
+
+.plant-card:hover,
+.challenge-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.empty-state {
+    text-align: center;
+    padding: 3rem;
+    background: var(--background-light, #f8f9fa);
+    border-radius: 12px;
+    margin: 2rem auto;
+    max-width: 600px;
+}
+
+.empty-icon {
+    font-size: 3rem;
+    color: var(--text-secondary, #6c757d);
+    margin-bottom: 1rem;
+}
+
+.add-plant-form {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    margin: 0 auto 2rem;
+}
+
+.add-plant-form input {
+    width: 100%;
+    padding: 0.75rem;
+    margin-bottom: 1rem;
+    border: 1px solid var(--border-color, #e9ecef);
+    border-radius: 6px;
+    font-family: var(--font-family);
+}
+
+.form-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+}
+
+.form-buttons button {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: var(--font-family);
+    font-weight: 500;
+}
+
+.form-buttons button[type="submit"] {
+    background: var(--primary-color, #2E6930);
+    color: white;
+}
+
+.form-buttons button[type="button"] {
+    background: var(--background-light, #f8f9fa);
+    color: var(--text-secondary, #6c757d);
+}
+
+/* Loading and Error States */
+.loading,
+.error {
+    text-align: center;
+    padding: 2rem;
+    color: var(--text-secondary, #6c757d);
+    font-family: var(--font-family);
+}
+
+.error {
+    color: var(--error-color, #dc3545);
+}
+
+/* Ensure chat button stays on top */
+.chat-button {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 999;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    background: var(--primary-color, #2E6930);
+    color: white;
+    cursor: pointer;
+    font-family: var(--font-family);
+    font-weight: 500;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s ease;
+}
+
+.chat-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}

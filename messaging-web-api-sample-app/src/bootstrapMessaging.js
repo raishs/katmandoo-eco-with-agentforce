@@ -1,13 +1,17 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 
 // Import children components to render.
 import MessagingWindow from "./components/messagingWindow";
 import MessagingButton from "./components/messagingButton";
 import QuickStartButton from "./components/quickStartButton";
+import TabNavigation from './components/TabNavigation';
+import MyPlants from './components/MyPlants';
+import MyChallenges from './components/MyChallenges';
 
 import './bootstrapMessaging.css';
+import './styles/tabs.css';
 
 import { storeOrganizationId, storeDeploymentDeveloperName, storeSalesforceMessagingUrl } from './services/dataProvider';
 import { determineStorageType, initializeWebStorage, getItemInWebStorageByKey, getItemInPayloadByKey } from './helpers/webstorageUtils';
@@ -15,15 +19,115 @@ import { APP_CONSTANTS, STORAGE_KEYS } from './helpers/constants';
 
 import Draggable from "./ui-effects/draggable";
 
-export default function BootstrapMessaging() {
-    let [shouldShowMessagingButton, setShowMessagingButton] = useState(false);
-    let [orgId, setOrgId] = useState('');
-    let [deploymentDevName, setDeploymentDevName] = useState('');
-    let [messagingURL, setMessagingURL] = useState('');
-    let [shouldDisableMessagingButton, setShouldDisableMessagingButton] = useState(false);
-    let [shouldShowMessagingWindow, setShouldShowMessagingWindow] = useState(false);
-    let [showMessagingButtonSpinner, setShowMessagingButtonSpinner] = useState(false);
-    let [isExistingConversation, setIsExistingConversation] = useState(false);
+const BootstrapMessaging = ({ username }) => {
+    const [activeTab, setActiveTab] = useState('plants');
+    const [showMessagingButton, setShowMessagingButton] = useState(false);
+    const [orgId, setOrgId] = useState('');
+    const [deploymentDevName, setDeploymentDevName] = useState('');
+    const [messagingURL, setMessagingURL] = useState('');
+    const [shouldDisableMessagingButton, setShouldDisableMessagingButton] = useState(false);
+    const [shouldShowMessagingWindow, setShouldShowMessagingWindow] = useState(false);
+    const [showMessagingButtonSpinner, setShowMessagingButtonSpinner] = useState(false);
+    const [isExistingConversation, setIsExistingConversation] = useState(false);
+
+    // Move embedded service configuration into a function
+    const configureEmbeddedService = () => {
+        if (typeof window !== 'undefined') {
+            console.log('=== Pre-Chat Configuration Debug Start ===');
+            console.log('Username being configured:', username);
+
+            // Initialize embedded_svc settings
+            window.embedded_svc = window.embedded_svc || {};
+            window.embedded_svc.settings = window.embedded_svc.settings || {};
+
+            // Configure core settings
+            window.embedded_svc.settings.enabledFeatures = ['LiveAgent'];
+            window.embedded_svc.settings.entryFeature = 'LiveAgent';
+            window.embedded_svc.settings.language = 'en-US';
+            
+            // Configure pre-chat settings
+            window.embedded_svc.settings.enablePrechat = true;
+            window.embedded_svc.settings.prechatEnabled = true;
+            window.embedded_svc.settings.extraPrechatFormDetails = [{
+                "label": "Username",
+                "name": "userName",
+                "value": username,
+                "displayToAgent": false,
+                "required": false,
+                "type": "hidden",
+                "transcriptFields": ["userName__c"]
+            }];
+
+            // Configure entity mapping
+            window.embedded_svc.settings.extraPrechatInfo = [{
+                "entityName": "MessagingSession",
+                "showOnCreate": true,
+                "saveToTranscript": "MessagingSession",
+                "entityFieldMaps": [{
+                    "isExactMatch": true,
+                    "fieldName": "userName",
+                    "doCreate": true,
+                    "doFind": false,
+                    "label": "Username"
+                }]
+            }];
+
+            // Configure display settings
+            window.embedded_svc.settings.defaultMinimizedText = 'Chat with Kat';
+            window.embedded_svc.settings.displayHelpButton = true;
+
+            // Add initialization event handlers
+            window.addEventListener("onEmbeddedServiceInit", () => {
+                console.log('=== Embedded Service Initialized ===');
+                if (window.embedded_svc) {
+                    console.log('Verifying pre-chat configuration:', {
+                        enabled: window.embedded_svc.settings.enablePrechat,
+                        prechatEnabled: window.embedded_svc.settings.prechatEnabled,
+                        username: username,
+                        formDetails: window.embedded_svc.settings.extraPrechatFormDetails,
+                        entityInfo: window.embedded_svc.settings.extraPrechatInfo
+                    });
+                }
+            });
+
+            // Add pre-chat submission handler
+            window.embedded_svc.onPrechatSubmit = function(prechatData) {
+                console.log('=== Pre-Chat Form Submission ===', {
+                    prechatData: prechatData,
+                    username: username
+                });
+                return prechatData;
+            };
+
+            console.log('=== Event Listeners Configured ===');
+        }
+    };
+
+    /**
+     * Initialize the messaging client
+     */
+    async function initializeMessagingClient(ord_id, deployment_dev_name, messaging_url) {
+        try {
+            console.log('=== Messaging Client Initialization Debug ===');
+            console.log('Current username:', username);
+            
+            // Configure embedded service first
+            configureEmbeddedService();
+            
+            // Then initialize storage
+            await initializeWebStorage(ord_id || orgId);
+            await Promise.all([
+                storeOrganizationId(ord_id || orgId),
+                storeDeploymentDeveloperName(deployment_dev_name || deploymentDevName),
+                storeSalesforceMessagingUrl(messaging_url || messagingURL)
+            ]);
+
+            console.log('=== Messaging Client Initialization Complete ===');
+        } catch (error) {
+            console.error('Error initializing messaging client:', error);
+            throw new Error('Failed to initialize messaging client');
+        }
+    }
 
     useEffect(() => {
         const storage = determineStorageType();
@@ -31,6 +135,9 @@ export default function BootstrapMessaging() {
             console.error(`Cannot initialize the app. Web storage is required for the app to function.`);
             return;
         }
+
+        // Configure embedded service first
+        configureEmbeddedService();
 
         const messaging_webstorage_key = Object.keys(storage).filter(item => item.startsWith(APP_CONSTANTS.WEB_STORAGE_KEY))[0];
 
@@ -43,59 +150,38 @@ export default function BootstrapMessaging() {
             if (!isValidOrganizationId(orgId)) {
                 console.warn(`Invalid organization id exists in the web storage: ${orgId}. Cleaning up the invalid object from the web storage.`);
                 storage.removeItem(messaging_webstorage_key);
-                // New conversation.
                 setIsExistingConversation(false);
                 return;
             }
             
-            // Re-Initialize state variables from the values in the web storage. This also re-populates app's deployment parameters input form fields with the previously entered data, in case of a messaging session continuation (e.g. page reload).
             setOrgId(orgId);
             setDeploymentDevName(deploymentDevName);
             setMessagingURL(messagingUrl);
 
-            // Initialize messaging client.
+            // Initialize messaging client with pre-chat configuration
             initializeMessagingClient(orgId, deploymentDevName, messagingUrl);
 
             const messagingJwt = getItemInWebStorageByKey(STORAGE_KEYS.JWT);
             if (messagingJwt) {
-                // Existing conversation.
                 setIsExistingConversation(true);
                 setShowMessagingButton(true);
                 setShouldDisableMessagingButton(true);
                 setShouldShowMessagingWindow(true);
             } else {
-                // New conversation.
                 setIsExistingConversation(false);
             }
         } else {
-            // New conversation.
             setIsExistingConversation(false);
         }
 
+        // Debug log for username prop
+        console.log('Username prop received:', username);
+
+        // Cleanup
         return () => {
             showMessagingWindow(false);
         };
-    }, []);
-
-    /**
-     * Initialize the messaging client by
-     * 1. internally initializing the Embedded Service deployment paramaters in-memory.
-     * 2. initializing Salesforce Organization Id in the browser web storage.
-     */
-    async function initializeMessagingClient(ord_id, deployment_dev_name, messaging_url) {
-        try {
-        // Initialize helpers.
-            await initializeWebStorage(ord_id || orgId);
-            await Promise.all([
-                storeOrganizationId(ord_id || orgId),
-                storeDeploymentDeveloperName(deployment_dev_name || deploymentDevName),
-                storeSalesforceMessagingUrl(messaging_url || messagingURL)
-            ]);
-        } catch (error) {
-            console.error('Error initializing messaging client:', error);
-            throw new Error('Failed to initialize messaging client');
-        }
-    }
+    }, [username]);
 
     /**
      * Validates whether the supplied string is a valid Salesforce Organization Id.
@@ -230,7 +316,7 @@ export default function BootstrapMessaging() {
 
             const { orgId: quickOrgId, deploymentDevName: quickDevName, messagingURL: quickUrl } = config;
             
-            // Validate the inputs before proceeding
+            // Validate inputs
             if (!isValidOrganizationId(quickOrgId)) {
                 throw new Error(`Invalid Organization ID: ${quickOrgId}`);
             }
@@ -241,12 +327,12 @@ export default function BootstrapMessaging() {
                 throw new Error(`Invalid Messaging URL: ${quickUrl}`);
             }
 
-            // Set the form values
+            // Set form values
             setOrgId(quickOrgId);
             setDeploymentDevName(quickDevName);
             setMessagingURL(quickUrl);
 
-            // Initialize the Messaging Client
+            // Initialize the Messaging Client with pre-chat configuration
             await initializeMessagingClient(quickOrgId, quickDevName, quickUrl);
             
             // New conversation
@@ -260,7 +346,6 @@ export default function BootstrapMessaging() {
             console.error('Error during quick start initialization:', error);
             setShowMessagingButtonSpinner(false);
             alert('Failed to initialize chat. Please try again.');
-            // Reset the UI state
             showMessagingWindow(false);
         }
     }
@@ -268,11 +353,14 @@ export default function BootstrapMessaging() {
     return (
         <div className="katmandooContainer">
             <header className="header">
-                <img 
-                    src={require('./assets/temple-logo.png')} 
-                    alt="KatManDoo Eco Logo" 
-                    className="logo" 
-                />
+                <div className="headerContent">
+                    <div className="logoContainer">
+                        <img src={require('./assets/temple-logo.png')} alt="Temple Logo" className="templeLogo" />
+                    </div>
+                    <div className="userWelcome">
+                        Welcome, {username}!
+                    </div>
+                </div>
             </header>
             <main>
                 <section className="heroSection">
@@ -332,6 +420,16 @@ export default function BootstrapMessaging() {
                         </div>
             </div>
                 </section>
+
+                <TabNavigation activeTab={activeTab} onTabChange={setActiveTab} />
+                
+                <div className="tab-content">
+                    {activeTab === 'plants' ? (
+                        <MyPlants username={username} />
+                    ) : (
+                        <MyChallenges username={username} />
+                    )}
+                </div>
             </main>
 
             {shouldShowMessagingWindow && (
@@ -345,6 +443,27 @@ export default function BootstrapMessaging() {
                     </div>
                 </Draggable>
             )}
+
+            {showMessagingButton && (
+                <button
+                    className="chat-button"
+                    onClick={() => setShouldShowMessagingWindow(!shouldShowMessagingWindow)}
+                    style={{
+                        position: 'fixed',
+                        bottom: '20px',
+                        right: '20px',
+                        zIndex: 999
+                    }}
+                >
+                    {showMessagingButtonSpinner ? (
+                        <span className="spinner"></span>
+                    ) : (
+                        'Chat with Kat'
+                    )}
+                </button>
+            )}
         </div>
     );
 }
+
+export default BootstrapMessaging;
