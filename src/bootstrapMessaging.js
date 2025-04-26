@@ -7,7 +7,17 @@ window.embedded_svc.settings.enabledFeatures = ['LiveAgent'];
 window.embedded_svc.settings.entryFeature = 'LiveAgent';
 window.embedded_svc.settings.language = 'en-US';
 
-// Configure pre-chat settings
+// Configure custom colors and branding
+window.embedded_svc.settings.customColors = {
+    brandColor: '#2A5CAA', // Primary brand color
+    brandColorLight: '#4A7CC8', // Lighter shade for hover states
+    brandColorDark: '#1A4C8A', // Darker shade for active states
+    contrastColor: '#FFFFFF', // Text color on brand color
+    contrastColorLight: '#F5F5F5', // Light background
+    contrastColorDark: '#333333' // Dark text
+};
+
+// Configure pre-chat settings with enhanced form fields
 window.embedded_svc.settings.enablePrechat = true;
 window.embedded_svc.settings.prechatEnabled = true;
 window.embedded_svc.settings.forms = [{
@@ -29,6 +39,40 @@ window.embedded_svc.settings.forms = [{
             "required": true,
             "isHidden": true,
             "type": "hidden"
+        },
+        {
+            "label": "Priority",
+            "name": "priority",
+            "displayToAgent": true,
+            "required": true,
+            "isHidden": false,
+            "type": "picklist",
+            "options": [
+                {"label": "Low", "value": "low"},
+                {"label": "Medium", "value": "medium"},
+                {"label": "High", "value": "high"}
+            ]
+        },
+        {
+            "label": "Preferred Contact Method",
+            "name": "contactMethod",
+            "displayToAgent": true,
+            "required": true,
+            "isHidden": false,
+            "type": "radio",
+            "options": [
+                {"label": "Email", "value": "email"},
+                {"label": "Phone", "value": "phone"}
+            ]
+        },
+        {
+            "label": "Additional Information",
+            "name": "additionalInfo",
+            "displayToAgent": true,
+            "required": false,
+            "isHidden": false,
+            "type": "textarea",
+            "maxLength": 500
         }
     ]
 }];

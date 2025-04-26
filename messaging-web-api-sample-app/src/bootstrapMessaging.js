@@ -436,7 +436,7 @@ const BootstrapMessaging = ({ username }) => {
                     <MessagingWindow
                         isExistingConversation={isExistingConversation}
                         showMessagingWindow={showMessagingWindow}
-                        deactivateMessagingButton={appUiReady}
+                            deactivateMessagingButton={appUiReady} 
                         username={username} />
                     </div>
                 </Draggable>

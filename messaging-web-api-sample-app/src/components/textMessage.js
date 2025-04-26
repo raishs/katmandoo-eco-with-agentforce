@@ -2,6 +2,7 @@ import "./textMessage.css";
 import { useState, useEffect } from "react";
 import * as ConversationEntryUtil from "../helpers/conversationEntryUtil";
 import { util } from "../helpers/common";
+import DOMPurify from 'dompurify';
 
 export default function TextMessage({conversationEntry}) {
     // Initialize acknowledgement status.
@@ -29,7 +30,6 @@ export default function TextMessage({conversationEntry}) {
      */
     function generateMessageSenderContentClassName() {
         const className = `textMessageSenderContent ${conversationEntry.isEndUserMessage ? `outgoing` : `incoming`}`;
-
         return className;
     }
 
@@ -39,7 +39,6 @@ export default function TextMessage({conversationEntry}) {
      */
     function generateMessageBubbleContainerClassName() {
         const className = `textMessageBubbleContainer`;
-
         return className;
     }
 
@@ -49,7 +48,6 @@ export default function TextMessage({conversationEntry}) {
      */
     function generateMessageBubbleClassName() {
         const className = `textMessageBubble ${conversationEntry.isEndUserMessage ? `outgoing` : `incoming`}`;
-
         return className;
     }
 
@@ -59,22 +57,20 @@ export default function TextMessage({conversationEntry}) {
      */
     function generateMessageContentClassName() {
         const className = `textMessageContent`;
-
         return className;
     }
 
     /**
-     * Generates a text with the message sender infomation.
+     * Generates a text with the message sender information.
      * @returns {string}
      */
     function generateMessageSenderContentText() {
         const formattedTime = util.getFormattedTime(conversationEntry.transcriptedTimestamp);
-
         return `${conversationEntry.isEndUserMessage ? `You` : conversationEntry.actorName} at ${formattedTime}`;
     }
 
     /**
-     * Generates text content with the message acknowledgement infomation.
+     * Generates text content with the message acknowledgement information.
      * @returns {string}
      */
     function generateMessageAcknowledgementContentText() {
@@ -93,14 +89,34 @@ export default function TextMessage({conversationEntry}) {
         }
     }
 
+    /**
+     * Safely renders HTML content from the message
+     * @param {string} content - The message content
+     * @returns {string} Sanitized HTML content
+     */
+    function renderMessageContent(content) {
+        // Sanitize the HTML content
+        const sanitizedContent = DOMPurify.sanitize(content, {
+            ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'a', 'p', 'br', 'ul', 'ol', 'li', 'img'],
+            ALLOWED_ATTR: ['href', 'src', 'alt', 'title']
+        });
+        
+        return <div dangerouslySetInnerHTML={{ __html: sanitizedContent }} />;
+    }
+
     return (
         <>
             <div className={generateMessageBubbleContainerClassName()}>
                 <div className={generateMessageBubbleClassName()}>
-                    <p className={generateMessageContentClassName()}>{ConversationEntryUtil.getTextMessageContent(conversationEntry)}</p>
+                    <div className={generateMessageContentClassName()}>
+                        {renderMessageContent(ConversationEntryUtil.getTextMessageContent(conversationEntry))}
+                    </div>
                 </div>
             </div>
-            <p className={generateMessageSenderContentClassName()}>{generateMessageAcknowledgementContentText()}{generateMessageSenderContentText()}</p>
+            <p className={generateMessageSenderContentClassName()}>
+                {generateMessageAcknowledgementContentText()}
+                {generateMessageSenderContentText()}
+            </p>
         </>
     );
 }

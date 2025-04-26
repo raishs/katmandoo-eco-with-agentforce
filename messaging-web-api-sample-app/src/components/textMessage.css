@@ -21,18 +21,21 @@
     min-width: 50px;
     max-width: 350px;
     width: -webkit-fit-content;
-    background-color: rgb(158 154 154);
+    background-color: #2E6930;  /* KatMandoo green for outgoing */
     border-radius: 20px;
     margin: 1px auto;
-    padding: 8px 14px;
+    padding: 12px 16px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .textMessageBubble[class~="incoming"] {
     float: left;
+    background-color: #f0f0f0;  /* Light gray for incoming */
 }
 
 .textMessageBubble[class~="outgoing"] {
     float: right;
+    background-color: #2E6930;  /* KatMandoo green for outgoing */
 }
 
 .textMessageContent {
@@ -40,4 +43,45 @@
     margin: 0px;
     font-size: 16px;
     font-weight: 300;
+    line-height: 1.4;
+}
+
+.textMessageBubble[class~="incoming"] .textMessageContent {
+    color: #333333;  /* Dark text for incoming messages */
+}
+
+/* Rich Text Support */
+.textMessageContent a {
+    color: inherit;
+    text-decoration: underline;
+}
+
+.textMessageContent strong,
+.textMessageContent b {
+    font-weight: 600;
+}
+
+.textMessageContent em,
+.textMessageContent i {
+    font-style: italic;
+}
+
+.textMessageContent ul,
+.textMessageContent ol {
+    margin: 8px 0;
+    padding-left: 20px;
+}
+
+.textMessageContent li {
+    margin: 4px 0;
+}
+
+.textMessageContent p {
+    margin: 8px 0;
+}
+
+.textMessageContent img {
+    max-width: 100%;
+    border-radius: 8px;
+    margin: 8px 0;
 }
