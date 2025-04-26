@@ -137,16 +137,104 @@ export function isTextMessage(conversationEntry) {
 };
 
 /**
- * Gets the supplied Text Message's text.
- * @param {object} conversationEntry
+ * Format text with rich formatting
+ * @param {string} text - Raw text content
+ * @returns {string} Formatted HTML content
+ */
+function formatRichText(text) {
+    if (!text) return '';
+
+    // First handle bullet points and numbered lists
+    let formatted = text;
+    
+    // Check if we have any bullet points or numbered lists
+    const hasBullets = /^[-*•]\s+/m.test(text);
+    const hasNumbers = /^\d+\.\s+/m.test(text);
+    
+    if (hasBullets || hasNumbers) {
+        // Split into lines
+        const lines = formatted.split('\n');
+        let inList = false;
+        let currentListType = null;
+        
+        formatted = lines.map(line => {
+            // Check for bullet points
+            if (line.match(/^[-*•]\s+/)) {
+                if (!inList || currentListType !== 'ul') {
+                    // Start new unordered list
+                    const prefix = inList ? '</ul><ul>' : '<ul>';
+                    inList = true;
+                    currentListType = 'ul';
+                    return prefix + `<li>${line.replace(/^[-*•]\s+/, '')}</li>`;
+                }
+                return `<li>${line.replace(/^[-*•]\s+/, '')}</li>`;
+            }
+            // Check for numbered lists
+            else if (line.match(/^\d+\.\s+/)) {
+                if (!inList || currentListType !== 'ol') {
+                    // Start new ordered list
+                    const prefix = inList ? '</ol><ol>' : '<ol>';
+                    inList = true;
+                    currentListType = 'ol';
+                    return prefix + `<li>${line.replace(/^\d+\.\s+/, '')}</li>`;
+                }
+                return `<li>${line.replace(/^\d+\.\s+/, '')}</li>`;
+            }
+            // Regular line
+            else {
+                if (inList) {
+                    inList = false;
+                    currentListType = null;
+                    return `</${currentListType}>${line}`;
+                }
+                return line;
+            }
+        }).join('\n');
+        
+        // Close any open list at the end
+        if (inList) {
+            formatted += `</${currentListType}>`;
+        }
+    }
+
+    // Convert remaining line breaks to <br> tags
+    formatted = formatted.replace(/\n/g, '<br>');
+
+    // Convert URLs to links
+    formatted = formatted.replace(
+        /(https?:\/\/[^\s<]+)/g,
+        '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>'
+    );
+
+    return formatted;
+}
+
+/**
+ * Gets the text message content from the conversation entry.
+ * @param {object} conversationEntry - conversation entry object
  * @returns {string}
  */
 export function getTextMessageContent(conversationEntry) {
-    if (isTextMessage(conversationEntry)) {
-        return getStaticContentPayload(conversationEntry).text;
+    // Handle static content messages (initial messages)
+    if (isConversationEntryStaticContentMessage(conversationEntry)) {
+        const staticContent = getStaticContentPayload(conversationEntry);
+        return formatRichText(staticContent?.text || '');
     }
-    return "";
-};
+    
+    // Handle regular text messages
+    if (conversationEntry.entryType === CONVERSATION_CONSTANTS.EntryTypes.TEXT_MESSAGE || 
+        conversationEntry.entryType === CONVERSATION_CONSTANTS.EntryTypes.CONVERSATION_MESSAGE) {
+        const messageContent = conversationEntry.content?.text || conversationEntry.content;
+        
+        // Apply rich formatting for all messages except end user messages
+        if (conversationEntry.sender?.role !== CONVERSATION_CONSTANTS.ParticipantRoles.ENDUSER) {
+            return formatRichText(messageContent);
+        }
+        return messageContent;
+    }
+    
+    return '';
+}
 
 //============================================================== CHOICES MESSAGE functions ==============================================================
 /**

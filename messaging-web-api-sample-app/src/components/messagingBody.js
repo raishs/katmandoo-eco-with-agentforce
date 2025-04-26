@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import "./messagingBody.css";
 import { util } from "../helpers/common";
 import { CONVERSATION_CONSTANTS } from "../helpers/constants";
@@ -8,11 +8,19 @@ import ConversationEntry from "./conversationEntry";
 import TypingIndicator from "./typingIndicator";
 
 export default function MessagingBody({ conversationEntries, conversationStatus, typingParticipants, showTypingIndicator }) {
+    const messagesEndRef = useRef(null);
+
+    const scrollToBottom = () => {
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    };
+
+    useEffect(() => {
+        scrollToBottom();
+    }, [conversationEntries, showTypingIndicator]); // Scroll when new messages arrive or typing indicator changes
 
     useEffect(() => {
         if (conversationStatus === CONVERSATION_CONSTANTS.ConversationStatus.CLOSED_CONVERSATION) {
             // Render conversation closed message.
-
             // Remove typing indicator.
             typingParticipants = [];
             showTypingIndicator = false;
@@ -59,11 +67,12 @@ export default function MessagingBody({ conversationEntries, conversationStatus,
 
     return (
         <div className="messagingBody">
-            {conversationEntries.length > 0 && <p className="conversationStartTimeText">{generateConversationStartTimeText()}</p>}
+            <div className="conversationStartTimeText">{generateConversationStartTimeText()}</div>
             <ul className="conversationEntriesListView">
                 {conversationEntriesListView}
+                {showTypingIndicator && <TypingIndicator typingParticipants={typingParticipants} />}
             </ul>
-            {showTypingIndicator && <TypingIndicator typingParticipants={typingParticipants}/>}
+            <div ref={messagesEndRef} /> {/* Anchor element for auto-scrolling */}
             {conversationStatus === CONVERSATION_CONSTANTS.ConversationStatus.CLOSED_CONVERSATION && <p className="conversationEndTimeText">{generateConversationEndTimeText()}</p>}
         </div>
     );

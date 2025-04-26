@@ -1,53 +1,68 @@
+/* Message sender info */
 .textMessageSenderContent {
     color: rgb(153, 153, 153);
-    margin: 0px;
-    font-size: 10px;
+    margin: 4px 16px;
+    font-size: 11px;
     font-weight: 400;
+    font-family: 'Inter', sans-serif;
 }
 
 .textMessageSenderContent[class~="incoming"] {
     text-align: left;
+    margin-left: 16px;
 }
 
 .textMessageSenderContent[class~="outgoing"] {
     text-align: right;
+    margin-right: 16px;
 }
 
+/* Message container */
 .textMessageBubbleContainer {
-    overflow: auto;
+    overflow: visible;
+    margin: 2px 12px;
+    position: relative;
 }
 
+/* Message bubble */
 .textMessageBubble {
     min-width: 50px;
-    max-width: 350px;
+    max-width: 80%;
+    width: fit-content;
     width: -webkit-fit-content;
-    background-color: #2E6930;  /* KatMandoo green for outgoing */
-    border-radius: 20px;
-    margin: 1px auto;
-    padding: 12px 16px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background-color: #2E6930;
+    border-radius: 18px;
+    margin: 2px 0;
+    padding: 10px 16px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    position: relative;
 }
 
 .textMessageBubble[class~="incoming"] {
     float: left;
-    background-color: #f0f0f0;  /* Light gray for incoming */
+    background-color: #f0f0f0;
+    border-top-left-radius: 4px;
 }
 
 .textMessageBubble[class~="outgoing"] {
     float: right;
-    background-color: #2E6930;  /* KatMandoo green for outgoing */
+    background-color: #2E6930;
+    border-top-right-radius: 4px;
 }
 
+/* Message content */
 .textMessageContent {
     color: rgb(255, 255, 255);
-    margin: 0px;
-    font-size: 16px;
-    font-weight: 300;
+    margin: 0;
+    font-size: 14px;
+    font-weight: 400;
     line-height: 1.4;
+    font-family: 'Inter', sans-serif;
+    text-align: left;
 }
 
 .textMessageBubble[class~="incoming"] .textMessageContent {
-    color: #333333;  /* Dark text for incoming messages */
+    color: #333333;
 }
 
 /* Rich Text Support */
@@ -66,22 +81,56 @@
     font-style: italic;
 }
 
+/* List styling */
 .textMessageContent ul,
 .textMessageContent ol {
-    margin: 8px 0;
+    margin: 4px 0;
     padding-left: 20px;
+    text-align: left;
 }
 
 .textMessageContent li {
-    margin: 4px 0;
+    margin: 2px 0;
+    line-height: 1.3;
+    text-align: left;
 }
 
 .textMessageContent p {
-    margin: 8px 0;
+    margin: 0;
+    padding: 2px 0;
 }
 
-.textMessageContent img {
-    max-width: 100%;
-    border-radius: 8px;
-    margin: 8px 0;
+/* Emoji styling */
+.textMessageContent img.emoji {
+    height: 1.2em;
+    width: 1.2em;
+    margin: 0 0.1em;
+    vertical-align: -0.2em;
+}
+
+/* Message transitions */
+.textMessageBubble {
+    transition: all 0.2s ease;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.textMessageBubble.fade-in {
+    opacity: 0;
+    transform: translateY(10px);
+}
+
+/* Mobile responsiveness */
+@media (max-width: 480px) {
+    .textMessageBubble {
+        max-width: 85%;
+    }
+    
+    .textMessageContent {
+        font-size: 13px;
+    }
+    
+    .textMessageSenderContent {
+        font-size: 10px;
+    }
 }

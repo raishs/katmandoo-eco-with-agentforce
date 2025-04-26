@@ -5,36 +5,63 @@
     font-family: inherit;
     border-radius: inherit;
     background-color: whitesmoke;
+    align-items: center;
+    padding: 0 10px;
+    gap: 8px;
 }
 
 .messagingFooter textarea {
-    width: inherit;
+    flex: 1;
     align-content: center;
     font-family: inherit;
     border-radius: 15px;
     margin: 5px;
     resize: none;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
 }
 
-.sendButton {
+.sendButton, .mediaButton {
     background: transparent;
     border: 0;
-}
-
-.sendButtonIcon{
-    transform: scale(2);
-    fill: rgb(98 91 91);
-}
-
-.sendButton:hover:not(:disabled){
-    opacity: 0.7;
+    padding: 8px;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background-color 0.2s;
 }
 
-.sendButton:disabled {
+.sendButton:hover:not(:disabled),
+.mediaButton:hover:not(:disabled) {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.sendButton:disabled,
+.mediaButton:disabled {
     opacity: 0.3;
+    cursor: not-allowed;
 }
 
-.messagingInputTextarea:disabled, .sendButton:disabled {
+.sendButtonIcon,
+.mediaButtonIcon {
+    font-size: 20px;
+    color: #2E6930;
+}
+
+.mediaButtonIcon.recording {
+    color: #dc3545;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
+
+.messagingInputTextarea:disabled,
+.sendButton:disabled {
     cursor: not-allowed;
 }
