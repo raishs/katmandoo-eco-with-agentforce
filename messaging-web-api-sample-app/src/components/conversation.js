@@ -793,6 +793,21 @@ export default function Conversation(props) {
         });
     }
 
+    /**
+     * Handle quick reply selection
+     * @param {string} selectedOption - The selected quick reply option
+     */
+    const handleQuickReplySelect = (selectedOption) => {
+        const conversationId = getConversationId();
+        if (!conversationId) {
+            console.warn('No conversation ID available');
+            return;
+        }
+
+        const messageId = util.generateUUID();
+        handleSendTextMessage(conversationId, selectedOption, messageId);
+    };
+
     return (
         <>
             <MessagingHeader
@@ -805,7 +820,8 @@ export default function Conversation(props) {
                     conversationEntries={conversationEntries}
                     conversationStatus={conversationStatus} 
                     typingParticipants={currentTypingParticipants}
-                    showTypingIndicator={isAnotherParticipantTyping} />
+                    showTypingIndicator={isAnotherParticipantTyping}
+                    onQuickReplySelect={handleQuickReplySelect} />
                 <MessagingInputFooter
                     conversationStatus={conversationStatus} 
                     sendTextMessage={handleSendTextMessage} 

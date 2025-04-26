@@ -1,0 +1,58 @@
+.quickReplies {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+    padding: 0 8px;
+}
+
+.quickReplyButton {
+    background-color: #ffffff;
+    border: 1px solid #2E6930;
+    color: #2E6930;
+    border-radius: 16px;
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.quickReplyButton:hover {
+    background-color: #2E6930;
+    color: #ffffff;
+}
+
+.quickReplyButton:active {
+    transform: scale(0.98);
+}
+
+.quickReplyButton:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(46, 105, 48, 0.2);
+}
+
+/* Disabled state */
+.quickReplyButton:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background-color: #f0f0f0;
+    border-color: #cccccc;
+    color: #666666;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 480px) {
+    .quickReplies {
+        padding: 0 4px;
+    }
+    
+    .quickReplyButton {
+        font-size: 13px;
+        padding: 6px 12px;
+    }
+} 

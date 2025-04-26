@@ -212,19 +212,90 @@ function formatRichText(text) {
 /**
  * Gets the text message content from the conversation entry.
  * @param {object} conversationEntry - conversation entry object
- * @returns {string}
+ * @returns {string|object}
  */
 export function getTextMessageContent(conversationEntry) {
+    // Handle choices messages (quick replies)
+    if (isConversationEntryChoicesMessage(conversationEntry)) {
+        const content = conversationEntry.content;
+        return {
+            type: 'quickReply',
+            text: content.message || content.text,
+            quickReplies: content.choices.map(choice => ({
+                label: choice.text || choice.label,
+                value: choice.value || choice.text || choice.label
+            }))
+        };
+    }
+    
     // Handle static content messages (initial messages)
     if (isConversationEntryStaticContentMessage(conversationEntry)) {
         const staticContent = getStaticContentPayload(conversationEntry);
-        return formatRichText(staticContent?.text || '');
+        if (staticContent.formatType === CONVERSATION_CONSTANTS.FormatTypes.QUICK_REPLIES) {
+            return {
+                type: 'quickReply',
+                text: staticContent.text,
+                quickReplies: staticContent.quickReplies || []
+            };
+        }
+        
+        // Check if this is a chatbot message with bullet points
+        const messageText = staticContent?.text || '';
+        if (conversationEntry.sender?.role === CONVERSATION_CONSTANTS.ParticipantRoles.CHATBOT && 
+            /^[-*•]\s+/m.test(messageText)) {
+            
+            // Split into main message and options
+            const lines = messageText.split('\n');
+            const mainMessage = lines.filter(line => !line.match(/^[-*•]\s+/)).join('\n');
+            const options = lines
+                .filter(line => line.match(/^[-*•]\s+/))
+                .map(line => line.replace(/^[-*•]\s+/, '').trim())
+                .filter(option => option);
+
+            if (options.length > 0) {
+                return {
+                    type: 'quickReply',
+                    text: mainMessage,
+                    quickReplies: options.map(option => ({
+                        label: option,
+                        value: option
+                    }))
+                };
+            }
+        }
+        
+        return formatRichText(messageText);
     }
     
     // Handle regular text messages
     if (conversationEntry.entryType === CONVERSATION_CONSTANTS.EntryTypes.TEXT_MESSAGE || 
         conversationEntry.entryType === CONVERSATION_CONSTANTS.EntryTypes.CONVERSATION_MESSAGE) {
         const messageContent = conversationEntry.content?.text || conversationEntry.content;
+        
+        // Check if this is a chatbot message with bullet points
+        if (conversationEntry.sender?.role === CONVERSATION_CONSTANTS.ParticipantRoles.CHATBOT && 
+            typeof messageContent === 'string' && 
+            /^[-*•]\s+/m.test(messageContent)) {
+            
+            // Split into main message and options
+            const lines = messageContent.split('\n');
+            const mainMessage = lines.filter(line => !line.match(/^[-*•]\s+/)).join('\n');
+            const options = lines
+                .filter(line => line.match(/^[-*•]\s+/))
+                .map(line => line.replace(/^[-*•]\s+/, '').trim())
+                .filter(option => option);
+
+            if (options.length > 0) {
+                return {
+                    type: 'quickReply',
+                    text: mainMessage,
+                    quickReplies: options.map(option => ({
+                        label: option,
+                        value: option
+                    }))
+                };
+            }
+        }
         
         // Apply rich formatting for all messages except end user messages
         if (conversationEntry.sender?.role !== CONVERSATION_CONSTANTS.ParticipantRoles.ENDUSER) {

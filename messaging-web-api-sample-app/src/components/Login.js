@@ -8,7 +8,7 @@ const Login = ({ onLogin }) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        if ((username === 'Momo' || username === 'JamieLee') && password === 'Agentforce') {
+        if ((username === 'Momo' || username === 'JamieLee' || username === 'Raish') && password === 'Agentforce') {
             onLogin(username);
         } else {
             setError('Invalid credentials. Please try again.');

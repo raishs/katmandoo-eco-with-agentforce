@@ -7,7 +7,7 @@ import { CONVERSATION_CONSTANTS } from "../helpers/constants";
 import ConversationEntry from "./conversationEntry";
 import TypingIndicator from "./typingIndicator";
 
-export default function MessagingBody({ conversationEntries, conversationStatus, typingParticipants, showTypingIndicator }) {
+export default function MessagingBody({ conversationEntries, conversationStatus, typingParticipants, showTypingIndicator, onQuickReplySelect }) {
     const messagesEndRef = useRef(null);
 
     const scrollToBottom = () => {
@@ -34,7 +34,8 @@ export default function MessagingBody({ conversationEntries, conversationStatus,
     const conversationEntriesListView = conversationEntries.map(conversationEntry =>
         <ConversationEntry
             key={conversationEntry.messageId} 
-            conversationEntry={conversationEntry} />
+            conversationEntry={conversationEntry}
+            onQuickReplySelect={onQuickReplySelect} />
     );
 
     /**
