@@ -10,6 +10,25 @@
     gap: 8px;
 }
 
+/* Hide media buttons completely */
+.mediaButton,
+button.mediaButton,
+.messagingFooter .mediaButton {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: 0 !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
+
+/* Hide the file input as well */
+input[type="file"] {
+    display: none !important;
+}
+
 .messagingFooter textarea {
     flex: 1;
     align-content: center;
