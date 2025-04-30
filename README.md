@@ -1,0 +1,1 @@
+Cloned Web App sample provided by Salesforce to create and modify to create “KatManDoo Eco App” to demonstrate how Agentforce can integrate with SAAS products to provide seamless and effective Onboarding experience. 
