@@ -1,12 +1,22 @@
 /* Tab Navigation */
-.tab-navigation {
-  display: flex;
-  gap: 1rem;
-  padding: 1rem;
-  background: var(--background-light);
-  border-bottom: 2px solid var(--border-color);
+.tab-navigation, 
+div[class*="tab-navigation"] {
+  display: none !important; /* Hide the tab navigation */
 }
 
+/* Tab Content */
+.tab-content,
+div[class*="tab-content"] {
+  display: none !important; /* Hide the tab content */
+}
+
+/* Hide the bottom buttons */
+.add-button,
+button[class*="tab-button"] {
+  display: none !important;
+}
+
+/* Tab Button Styles (keeping these for future use) */
 .tab-button {
   display: flex;
   align-items: center;

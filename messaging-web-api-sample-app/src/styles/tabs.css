@@ -1,4 +1,21 @@
 /* Tab Navigation */
+.tab-navigation, 
+div[class*="tab-navigation"] {
+    display: none !important; /* Hide the tab navigation */
+}
+
+/* Tab Content */
+.tab-content,
+div[class*="tab-content"] {
+    display: none !important; /* Hide the tab content */
+}
+
+/* Hide the bottom buttons */
+.add-button,
+button[class*="tab-button"] {
+    display: none !important;
+}
+
 .tab-navigation {
     display: flex;
     gap: 1rem;
